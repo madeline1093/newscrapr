@@ -33,18 +33,19 @@ mongoose.connect("mongodb://localhost/newscrapr");
 
 app.get("/scrape", function(req, res){
     axios.get("http://www.sciencemag.org/").then(function(response) {
-        let $ = cheerio.load(response);
+        let $ = cheerio.load(response.data);
         
-        $("div.media_body").each(function(i, element) {
-            debugger;
+        $(".media__headline").each(function(i, element) {
+            //debugger;
             let results = [];
             let title = $(element).children("a").text();
             let link = "http://www.sciencemag.org/" + $(element).children("a").attr("href");
             console.log(title);
+            console.log(link);
             
             if(title && link) {
                 results.push([title, link])
-                console.log(results);
+                //console.log(results);
                 return results;
             }
 
@@ -54,7 +55,7 @@ app.get("/scrape", function(req, res){
                 })
                 .catch(function(err){
                     return res.json(err);
-                })
+                });
         })
 /*         .catch(function(err) {
             console.log(err);
