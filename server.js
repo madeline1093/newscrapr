@@ -36,6 +36,7 @@ app.get("/scrape", function(req, res){
         let $ = cheerio.load(response);
         
         $("div.media_body").each(function(i, element) {
+            debugger;
             let results = [];
             let title = $(element).children("a").text();
             let link = "http://www.sciencemag.org/" + $(element).children("a").attr("href");
