@@ -30,11 +30,10 @@ app.use(express.static("public"));
 mongoose.connect("mongodb://localhost/newscrapr");
 
 
-
 app.get("/scrape", function(req, res){
     axios.get("http://www.sciencemag.org/").then(function(response) {
         let $ = cheerio.load(response.data);
-        
+        console.log($);
         $(".media__headline").each(function(i, element) {
             //debugger;
             let results = [];
@@ -46,16 +45,18 @@ app.get("/scrape", function(req, res){
             if(title && link) {
                 results.push([title, link])
                 //console.log(results);
-                return results;
-            }
+                
+            
 
-            db.Article.create(results)
+             db.Article.create(results)
                 .then(function(dbArticle) {
                     console.log(dbArticle);
                 })
                 .catch(function(err){
                     return res.json(err);
                 });
+                //return results;
+            } 
         })
 /*         .catch(function(err) {
             console.log(err);
