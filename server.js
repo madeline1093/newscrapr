@@ -33,38 +33,37 @@ mongoose.connect("mongodb://localhost/newscrapr");
 app.get("/scrape", function(req, res){
     axios.get("http://www.sciencemag.org/").then(function(response) {
         let $ = cheerio.load(response.data);
-        console.log($);
+        //console.log($);
         $(".media__headline").each(function(i, element) {
             //debugger;
-            let results = [];
-            let title = $(element).children("a").text();
-            let link = "http://www.sciencemag.org/" + $(element).children("a").attr("href");
-            console.log(title);
-            console.log(link);
+            let results = {};
+            results.title = $(this).children("a").text();
+            results.link = "http://www.sciencemag.org/" + $(this).children("a").attr("href");
+            console.log(results.title);
+            console.log(results.link);
             
-            if(title && link) {
-                results.push([title, link])
+             
+                //results.push([title, link])
                 //console.log(results);
                 
             
 
-             db.Article.create(results)
+              db.Article.create(results)
                 .then(function(dbArticle) {
                     console.log(dbArticle);
                 })
                 .catch(function(err){
                     return res.json(err);
-                });
+                }); 
                 //return results;
-            } 
-        })
-/*         .catch(function(err) {
-            console.log(err);
-        }) */
+            })
+       /*   .catch(function(err) {
+            console.log(err); */
+        }); 
         res.send("scrape complete");
        
     });
-});
+
 
 
 app.listen(PORT, function() {
