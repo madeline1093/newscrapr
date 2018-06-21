@@ -39,8 +39,8 @@ app.get("/scrape", function(req, res){
             let results = {};
             results.title = $(this).children("a").text();
             results.link = "http://www.sciencemag.org/" + $(this).children("a").attr("href");
-            console.log(results.title);
-            console.log(results.link);
+            //console.log(results.title);
+            //console.log(results.link);
             
              
                 //results.push([title, link])
@@ -60,7 +60,7 @@ app.get("/scrape", function(req, res){
        /*   .catch(function(err) {
             console.log(err); */
         }); 
-        res.send("scrape complete");
+        res.end();
        
     });
 
