@@ -29,43 +29,92 @@ app.use(express.static("public"));
 // Connect to the Mongo DB
 mongoose.connect("mongodb://localhost/newscrapr");
 
+app.get("/scrape", function(req, res) {
+  var promisesArray = [];
+  axios.get("http://www.sciencemag.org/").then(function(response) {
+    let $ = cheerio.load(response.data);
 
-app.get("/scrape", function(req, res){
-    axios.get("http://www.sciencemag.org/").then(function(response) {
-        let $ = cheerio.load(response.data);
-        //console.log($);
-        $(".media__headline").each(function(i, element) {
-            //debugger;
-            let results = {};
-            results.title = $(this).children("a").text();
-            results.link = "http://www.sciencemag.org/" + $(this).children("a").attr("href");
-            //console.log(results.title);
-            //console.log(results.link);
-            
-             
-                //results.push([title, link])
-                //console.log(results);
-                
-            
+    //console.log($);
+    $(".media__headline").each(function(i, element) {
+      //debugger;
+      let results = {};
+      results.title = $(this)
+        .children("a")
+        .text();
+      results.link =
+        "http://www.sciencemag.org/" +
+        $(this)
+          .children("a")
+          .attr("href");
+      console.log(results.title);
+      console.log(results.link);
 
-              db.Article.create(results)
-                .then(function(dbArticle) {
-                    console.log(dbArticle);
-                })
-                .catch(function(err){
-                    return res.json(err);
-                }); 
-                //return results;
-            })
-       /*   .catch(function(err) {
-            console.log(err); */
-        }); 
-        res.end();
-       
+      //results.push([title, link])
+      //console.log(results);
+      if (results.title && results.link) {
+        promisesArray.push(
+          db.Article.create(results).catch(err => {
+            return err;
+          })
+        );
+      }
+
+      // .then(function(dbArticle) {
+      //     console.log(dbArticle);
+      //     res.send("scrape com;;plete");
+      // })
+      // .catch(function(err){
+      //     return res.json(err);
+      // });
+      //return results;
     });
-
-
-
-app.listen(PORT, function() {
-    console.log("App running on port " + PORT + "!");
+    /*   .catch(function(err) {
+            console.log(err); */
+    //console.log(promisesArray);
+    Promise.all(promisesArray).then(function(values) {
+      res.json(values);
+    });
   });
+
+  //res.end('scrape complete');
+});
+//get all articles
+app.get("/articles", function(req, res) {
+  db.Article.find({})
+    .then(function(dbArticle) {
+      res.json(dbArticle);
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
+});
+
+//populate article with a note
+app.get("/articles/:id", function(req, res) {
+  db.Article.findOne({ _id: req.params.id })
+    .populate("Note")
+    .then(function(dbArticle) {
+      res.json(dbArticle);
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
+});
+
+//update and save an article's note
+app.post("/articles/:id", function(req, res) {
+  db.Note.create(req.body)
+    .then(function(dbNote) {
+      return db.Article.findOneAndUpdate(
+        { _id: req.params.id },
+        { note: dNote._id },
+        { new: true }
+      );
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
+});
+app.listen(PORT, function() {
+  console.log("App running on port " + PORT + "!");
+});
