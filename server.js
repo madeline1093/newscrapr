@@ -46,6 +46,7 @@ app.get("/scrape", function(req, res) {
         $(this)
           .children("a")
           .attr("href");
+      results.save = false;
       console.log(results.title);
       console.log(results.link);
 
@@ -107,7 +108,7 @@ app.post("/articles/:id", function(req, res) {
     .then(function(dbNote) {
       return db.Article.findOneAndUpdate(
         { _id: req.params.id },
-        { note: dNote._id },
+        { note: dbNote._id },
         { new: true }
       );
     })
@@ -115,6 +116,20 @@ app.post("/articles/:id", function(req, res) {
       res.json(err);
     });
 });
+
+app.delete("/articles/:id", function(res, res) {
+  db.Note.delete(req.body)
+    .then(function(dbNote) {
+       return db.Note.findByIdAndRemove(
+         {_id: req.params.id},
+         { note: dbNote._id},
+       )
+    })
+    .catch(function(erR) {
+      res.json(err);
+    })
+})
+
 app.listen(PORT, function() {
   console.log("App running on port " + PORT + "!");
 });

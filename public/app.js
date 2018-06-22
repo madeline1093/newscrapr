@@ -1,4 +1,4 @@
-$.getJSON("/", function(data){
+$.getJSON("/articles", function(data){
     //console.log(data);
     for (let i=0; i <data.length; i++) {
         console.log(data[i].title);
