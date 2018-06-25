@@ -9,10 +9,28 @@
 
 </head>
 <body>
-    <div id="container">
+    <header>
         <h1>NewScrapr</h1>
+        <button class="savedArticles">See Saved Articles</button>
+    </header>
+    <div id="container"> 
         <div id="articles"></div>
         <div id="notes"></div>
+    </div>
+
+    <!-- Note Modal-->
+    <div class="modal">
+        <div class="modal-content">
+            <span class="closeTag">&times;</span>
+            <h1 class="noteTitle"></h1>
+    
+            <label for="inputTitle">Title: </label>
+            <input type="text" class="inputTitle" name="inputTitle">
+            <label for="noteContent">Comment: </label>
+            <input type="text" class="noteContent" name="noteContent">
+    
+            <button class="submit-comment">Submit</button>
+        </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="./app.js"></script>
